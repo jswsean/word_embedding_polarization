@@ -9,7 +9,7 @@ format:
     number-sections: true
     include-in-header: 
       text: |
-        \usepackage[top=15.4mm, left=22.4mm, right=22.4mm, bottom=22.4mm]{geometry}
+        \usepackage[top=12.5mm, left=22mm, right=22mm, bottom=22mm]{geometry}
         \usepackage{graphicx}
         \usepackage{caption}
         \usepackage{subcaption}
@@ -29,7 +29,7 @@ In this research, I plan to complement existing studies by using a word embeddin
 
 Specifically, my research aims are as follows:
 
-1.  Provide quantitative assessments on the overall and sector-specific semantic polarization trend
+1.  Provide quantitative assessments on semantic polarization trends along policy topics
 2.  In each policy topic, provide indicative assessments for each political party's issue framing strategies by identifying words that are closest to the topic keywords of interest in the embedding space.
 3.  In each policy topic, provide quantitative assessments on senator-level positions along the ideological vector space.
 
@@ -41,9 +41,9 @@ For this research, I will be using @gentzkow2019's data on U.S. congressional sp
 
 ## Method
 
-To achieve the above-mentioned first research aim, I plan to leverage the use of `GloVe` as a pre-trained embedding model to initialize the embedding values during the training process. Following the approach outlined by @rheault2020, I fit the model with party-congress indicator variables included as additional metadata to get the embedding value for each party-congress combinations. These embedding values are then fit to a PCA model, and the measure of interest that I will extract from this exercise is the first component scores, which reflects a particular speech's ideological component @rheault2020. I repeat the same procedure to get the sector-specific trends, but this time fitting the model only on corpus that contains the keywords related to each policy topic. The same implementation will be repeated for achieving the third research aim; I will use topic-specific corpus and include speaker metadata in the model to get their respective embeddings.
+To achieve the above-mentioned first research aim, I plan to leverage the use of `GloVe` as a pre-trained embedding model to initialize the embedding values during the training process. Following the approach outlined by @rheault2020, I fit the model on topic-specific corpus with party-congress indicator variables included as additional metadata to get the embedding value for each party-congress combinations. These embedding values are then fit to a PCA model, and the measure of interest that I will extract from this exercise is the first component scores, which reflects a particular speech's ideological component @rheault2020.
 
-The second research goal aims to look at the strategies that parties use to frame political issues. For this, I use the same pre-trained embedding model on party-topic corpus to identify words that are closest to the topic keyword for each party in the embedding space. To determine whether these semantics uses are significantly different along the party lines, I plan to use @rodriguez2023's regression-based `conText` package which allows me to draw inferences on statistical significance of the party coefficient. I include an interaction between party and congress session in the regression to determine whether the partisan gap has widened over time.
+The second research goal aims to look at the strategies that parties use to frame political issues. For this, I use the same pre-trained embedding model on party-topic corpus to identify words that are closest to the topic keyword for each party in the embedding space. To determine whether these semantics uses are significantly different along the party lines, I plan to use @rodriguez2023's regression-based `conText` package which allows me to draw inferences on statistical significance of the party coefficient. I include an interaction between party and congress session in the regression to determine whether the partisan gap has widened over time. To achieve the third research aim, adopting @kozlowski2019's approach, I plan to perform mathematical operations on the embedding vectors of words associated with "left" or "right" and two policy extremes on selected policy sectors (e.g., "renewable energy" vs. "fossil fuels"). Then, I project senator-level embeddings into the resulting vectors to identify their ideology positions along defined embedding spaces.
 
 ## Parameter of project success
 
