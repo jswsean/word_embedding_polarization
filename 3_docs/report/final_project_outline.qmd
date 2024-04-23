@@ -1,0 +1,43 @@
+---
+title: "Quantitative Analysis of Issue Framing and Political Polarization within the U.S. Congress"
+subtitle: "A Embedding Regression Approach"
+author: "Sean Hambali"
+date: last-modified
+date-format: long
+format: revealjs
+include-in-header: 
+  - text: |
+      <style>
+      #title-slide .title {
+        font-size: 1.5em;
+        color: #000000;
+      }
+      </style>
+---
+
+## Outline
+
+:::{.incremental}
+- **Topic**: Measures how Democrats and Republicans talk differently about political issues, and looks at the trend of between-party divergences over time.
+  * Focuses on topics with high degree of polarization (Gallup, 2017): *immigration*, *abortion*, *gun laws*, *climate change*, *healthcare*, and *racial justice*.
+  * Descriptive exploratory study throughout 107th-114th Congress, from years 2001-2017
+
+- **Data source**: Congressional Record parsed speech data from [Gentzkow, Shapiro and Taddy (2018)](https://data.stanford.edu/congress_text).
+:::
+
+## Outline
+
+:::{.incremental}
+- **Methods**: Draws on [Rodriguez, Spirling and Stewart (2023)](https://www.cambridge.org/core/journals/american-political-science-review/article/embedding-regression-models-for-contextspecific-description-and-inference/4C90013E5C714C8483ED95CC699022FB) [RSS], combining ALC embedding with regression framework
+  * ALC embeddings as a way to represent meaning even for rare words
+  * To understand each party's issue framing, I plan to implement PCA and $k$-means clustering to find top 10 closest words for each focal word-party combinations
+  * To explore whether the between-party semantic differences are statistically significant, I use RSS's `conText` package to perform embedding regression
+:::
+
+## Outline
+
+:::{.incremental}
+- **Parameters for project success**: 
+  * Successfully implementing the embedding model training and covering all sectors included in this analysis.
+  * Results that show clear between-party divergences in semantic uses and observable time trends in such party divergences.
+:::
