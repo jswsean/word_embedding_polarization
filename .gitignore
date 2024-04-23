@@ -1,14 +1,20 @@
 .Rproj.user
 .Rhistory
-.RData
 .Ruserdata
 *Rproj
 
 # Not track csv datafiles.
 *.csv
 *.dta
+*.RData
+*.rds
+*.npy
 
 # Specific files
 *.txt
 references/
+1_raw/
+2_build/
 
+# Vscode
+.vscode/
