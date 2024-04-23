@@ -2,6 +2,7 @@
 .Rhistory
 .Ruserdata
 *Rproj
+.vscode/
 
 # Not track csv datafiles.
 *.csv
@@ -15,6 +16,3 @@
 references/
 1_raw/
 2_build/
-
-# Vscode
-.vscode/
