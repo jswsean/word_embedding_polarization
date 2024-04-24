@@ -1,0 +1,420 @@
+---
+title: "Divergent Discourse: Exploring Issue Framing and Semantic Polarization in the 107<sup>th</sup>-114<sup>th</sup> U.S. Congress"
+author: "Sean Hambali"
+date: last-modified
+date-format: long
+format: revealjs
+include-in-header: 
+  - text: |
+      <style>
+      #title-slide .title {
+        font-size: 1.4em;
+        color: #000000;
+      }
+      </style>
+---
+
+
+## Motivation
+
+
+
+- Voters tend to overstate the extent to which polarization occurs, i.e. 
+[*false polarization*](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fa0028145), due to [politicians' use of negative frames](https://journals.sagepub.com/doi/10.1177/1940161220940964)
+
+- Studying polarization among Congress members is important to understanding downstream effects on mass polarization
+
+::: {.notes}
+
+* Important to study polarization across topics to explore potentials for policy compromises, and understanding why mass polarization occurs in some policy topics but not others!
+
+:::
+
+## Motivation
+
+:::{style="font-size: 90%;"}
+* Most studies that analyze partisan polarization among politicians have either used roll-call votes or text data
+
+* Several limitations remain:
+  - Roll-call votes are measures of *stated*, not *revealed* preferences
+  - Studies using text data often rely on static embedding approaches, which are not context-dependent
+  - Limited inference on the statistical significance of partisan differences
+  - Important heterogeneities across policy topics are often overlooked
+:::
+
+::: {.notes}
+* Roll-call votes measure what politicians choose to reveal. They also often reflect results of a strategic decision calculus that in some cases might be orthogonal to ideological preferences
+* Text data, on the other hand, can reveal biases
+* However, a lot of existing analyses using text data have relied on the use of static embedding approaches, such as Rheault and Cochrane (2020) 
+:::
+
+
+
+## Background
+
+:::{style="font-size: 80%;"}
+
+* This study aims to provide a descriptive and inferential exploration on:
+
+  1. The degree of polarization among politicians across [policy areas with high degrees of partisanship](https://news.gallup.com/opinion/polling-matters/215210/partisan-differences-growing-number-issues.aspx.)
+  
+  2. The characterization of issue framing employed by U.S. politicians along these issues
+  
+  3. The placement of politicians along an ideological spectrum across political issues [work in progress] 
+
+* Scope/limitations:
+
+  - Measures semantic differences in speeches and word use patterns
+  - Only captures polarization of partisanship to the extent that it correlates with semantic shifts  
+
+:::
+
+::: {.notes}
+* Policy topics: Immigration, abortion, climate change, gun debates, taxation, racial justice 
+:::
+
+
+## Data
+
+:::{style="font-size:90%;"}
+
+* Data is taken from Gentzkow, Shapiro and Taddy's [Congressional Records data](https://data.stanford.edu/congress_text)
+
+* Although the original data is available for the 43<sup>rd</sup>-114<sup>th</sup> Congress sessions, I was only parsing data from the 107<sup>th</sup>-114<sup>th</sup> sessions due to high computational costs
+
+* Contains data from 833,143 speeches
+
+* Also contains speaker metadata
+:::
+
+## Methods
+
+* This research is primarily interested in measuring group-wise semantic differences associated with specific terms 
+
+* Relies on the use of embeddings to represent words as vectors
+
+::: {.notes}
+
+* In other words, it asks whether Democrats and Republicans mean different thing when they refer to specific words, such as "immigration" or "abortion"? Is it becoming increasingly different over time?
+
+:::
+
+## Methods
+
+* However, three challenges remain...
+  - Rare word is often a problem
+  - How to get different embeddings for the same word across different contexts? 
+  - How to measure the magnitude and statistical significance of the relationship between embedding values and covariates?
+  
+* I use the *a la carte* (ALC) embedding regression approach (Rodriguez, Spriling and Stewart, 2023)
+
+* Uses locally trained GloVe model
+
+::: {.notes}
+
+* To provide explorations across policy areas, we would need to subset our corpus to only documents that contain the specific keywords of interest
+* However, sometimes these keywords of interests are rare, and there's a chance that we'll only end up with small corpus (of about 30,000-40,000 documents), which will limit the ability to produce a good embedding representation
+* Further, to be able to distinguish semantics across different groups, we want contextualized embedding -- that is, different embedding values for different instances of the same term, which doubles the complexity of the task.
+* Lastly, measuring statistical significance is of importance to my research aim, and characterization of standard errors via bootstrap or permutation will undoubtedly require massive computational costs.
+:::
+
+
+## Methods
+
+Consider the following two documents:
+
+1. *The debate lasted hours, but finally we [voted on the <u>bill</u> and it passed] with a large majority.*
+2. *At the restaurant we ran up [a huge wine <u>bill</u> to be paid] by our host.*
+
+$$
+\small 
+\overbrace{\begin{bmatrix} -1.22 \\ 1.33 \\ 0.53 \end{bmatrix}}^\text{Voted}
+\overbrace{\begin{bmatrix} 1.83 \\ 0.56 \\ -0.81 \end{bmatrix}}^\text{on}
+\overbrace{\begin{bmatrix} -0.06 \\ -0.73 \\ 0.82 \end{bmatrix}}^\text{the}
+\text{bill}
+\overbrace{\begin{bmatrix} 1.83 \\ 0.56 \\ -0.81 \end{bmatrix}}^\text{and}
+\overbrace{\begin{bmatrix} -1.50 \\ -1.65 \\ 0.48 \end{bmatrix}}^\text{it}
+\overbrace{\begin{bmatrix} -0.12 \\ 1.63 \\ -0.17 \end{bmatrix}}^\text{passed}
+$$
+
+::: {.notes}
+
+* ALC essentially computes embeddings for rare words simply by averaging the embeddings of the words around the target word
+* It needs three components: the pre-trained embedding, tokenized corpus, and transformation matrix.
+* Taking these examples from the Rodriguez paper 
+* One intuitive way to compute the embedding for the word "bill" is just to simply take the average of the embeddings for "Voted", "on", "the", etc.
+:::
+
+## Methods 
+
+
+:::{style="font-size: 90%;"}
+* Calculate $u_{bill_1}$ and $u_{bill_2}$:
+
+$$
+\small
+u_{bill_1} = \begin{bmatrix} 0.12 \\ 0.50 \\ 0.40 \end{bmatrix}; 
+u_{bill_2} = \begin{bmatrix} 0.35 \\ -0.38 \\ -0.24 \end{bmatrix}
+$$
+
+* Need to estimate $\mathbf{\hat{A}}$ to downweight common words, then compute $\hat{v}_{w} = \mathbf{\hat{A}}u_{w}$
+
+* Output is an embedding for each instance of the word in the corpus
+
+* Implemented using `conText` package in R
+:::
+
+
+::: {.notes}
+
+* However, several papers have shown that this approach will result in biased embedding representation: simply taking the average of the context words will overweight common words, such as the stop words.
+
+* A paper by Arora et al. (2018) shows that we can estimate some transformation matrix $\mathbf{\hat{A}}$ to downweight those common words, and get accurate embeddings for even very rare words! 
+
+* We only need to multiply the average embedding with the transformation matrix
+
+* The Rodriguez paper shows that we can actually distinguish the semantics for "Trump" vs "trump" with the ALC embedding approach.
+
+* This is a very cool approach which serves as a low computational alternative to other contextualized embedding approaches such as Transformers?
+:::
+
+## Methods 
+
+Going back to the original research objectives:
+
+:::{.incremental}
+:::{style="font-size: 85%;"}
+1. Degree of politicians' partisanship across specific policy areas
+    - [Embedding regression of $v_{w_i} = \beta_0 + \beta_1 X$]{style="color:red;"}
+2. Characterizing issue framing
+    - [Get group-wise embedding averages, identify closest GloVe terms based on cosine similarity]{style="color:red;"}
+    - [For each top terms, calculate cosine similarity ratio between groups]{style="color:red;"}
+    - [Pick few characterizing features, identify parties with higher similarity to those features]{style="color:red;"}
+:::
+:::
+
+::: {.notes}
+
+* The $X$ in this case would be the congress session-party indicators, with the 107<sup>th</sup> Democrats as the base group.
+* Tried manually doing the interactions but it always results in singular matrices so I'm only including the manually-defined session-party indicators.  
+
+:::
+
+## Methods
+
+:::{style="font-size: 85%;"}
+
+Step 1: Pre-processing
+
+* Removal of punctuations
+* Symbols
+* Numbers
+* Separators
+* English stopwords 
+* Tokens with lesser than 3 characters
+* Features that appear fewer than 5 times throughout the whole corpus
+* Set `padding=TRUE` to avoid forced adjacencies
+:::
+
+
+## Methods
+
+Step 2: Train GloVe model 
+
+* GloVe is locally trained with a window size of 6, aiming to produce a 300-d output
+* Learning rate = 0.05
+* Iteration is set to 100
+* Loss on first epoch = 0.1497, and on 100<sup>th</sup> epoch = 0.0364
+
+Step 3: Compute transformation matrix $\mathbf{\hat{A}}$
+
+* Computed with a weighting value of 500
+
+
+## [Results: Semantic shifts in abortion discourses]{.r-fit-text}
+
+::: {#fig-embedreg-abortion}
+
+![](alc_embedreg_abortion_plot.PNG){fig-align="left"}
+
+Embedding regression results in abortion discourses
+:::
+
+## [Results: Semantic shifts in guns discourses]{.r-fit-text}
+
+::: {#fig-embedreg-guns}
+
+![](alc_embedreg_guns_plot.PNG){fig-align="left"}
+
+Embedding regression results in guns discourses
+:::
+
+## [Results: Semantic shifts in tax discourses]{.r-fit-text}
+
+::: {#fig-embedreg-tax}
+
+![](alc_embedreg_tax_plot.PNG){fig-align="left"}
+
+Embedding regression results in tax discourses
+:::
+
+
+## [Results: Nearest terms to "immigration" embedding]{.r-fit-text}
+
+::: {#fig-nn-immigration}
+![](alc_nn_immigration_plot.PNG){fig-align="left"}
+
+Nearest terms to party-wise "immigration" embedding
+:::
+
+
+## [Results: Nearest terms to "gun" embedding]{.r-fit-text}
+
+::: {#fig-nn-gun}
+![](alc_nn_guns_plot.PNG){fig-align="left"}
+
+Nearest terms to party-wise "gun" embedding
+:::
+
+## [Results: Nearest terms to "abortion" embedding]{.r-fit-text}
+
+::: {#fig-nn-abortion}
+![](alc_nn_abortion_plot.PNG){fig-align="left"}
+
+Nearest terms to party-wise "abortion" embedding
+:::
+
+
+## [Results: Nearest terms to "tax" embedding]{.r-fit-text}
+
+::: {#fig-nn-tax}
+![](alc_nn_tax_plot.PNG){fig-align="left"}
+
+Nearest terms to party-wise "tax" embedding
+:::
+
+
+## [Results: Similarity ratio of party-wise "abortion" nearest neighbors]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-abortion}
+![](alc_cos_sim_ratio_abortion_plot.PNG){fig-align="left"}
+
+Cosine similarity ratio of party-wise "abortion" nearest neighbors
+:::
+
+
+## [Results: Similarity ratio of party-wise "immigration" nearest neighbors]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-immigration}
+![](alc_cos_sim_ratio_immigration_plot.PNG){fig-align="left"}
+
+Cosine similarity ratio of party-wise "immigration" nearest neighbors
+:::
+
+
+## [Results: Similarity ratio of party-wise "guns" nearest neighbors]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-guns}
+![](alc_cos_sim_ratio_guns_plot.PNG){fig-align="left"}
+
+Cosine similarity ratio of party-wise "guns" nearest neighbors
+:::
+
+
+## [Results: Similarity ratio of party-wise "tax" nearest neighbors]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-tax}
+![](alc_cos_sim_ratio_tax_plot.PNG){fig-align="left"}
+
+Cosine similarity ratio of party-wise "tax" nearest neighbors
+:::
+
+
+## [Results: Distance comparison of "immigration" to select keywords]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-immigration}
+![](alc_cos_sim_immigration_plot.PNG){fig-align="left"}
+
+Distance comparison of "immigration" to select keywords
+:::
+
+
+## [Results: Distance comparison of "abortion" to select keywords]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-abortion}
+![](alc_cos_sim_abortion_plot.PNG){fig-align="left"}
+
+Distance comparison of "abortion" to select keywords
+:::
+
+
+## [Results: Distance comparison of "guns" to select keywords]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-guns}
+![](alc_cos_sim_guns_plot.PNG){fig-align="left"}
+
+Distance comparison of "guns" to select keywords
+:::
+
+
+## [Results: Distance comparison of "tax" to select keywords]{.r-fit-text}
+
+::: {#fig-cos-sim-ratio-tax}
+![](alc_cos_sim_tax_plot.PNG){fig-align="left"}
+
+Distance comparison of "tax" to select keywords
+:::
+
+
+## Lessons learned and next steps
+
+* ALC embedding is a powerful alternative to compute context-dependent embeddings
+
+* Potentially a more stable approach for understanding semantic differences across covariates
+
+* In contrast to Rodriguez et al.'s statements, stemming does seem to have effect on the results
+
+* Use of remote GPUs via Google 
+
+* Next steps: politicians-wise cosine similarity comparisons along keywords that characterize stances in specific policy areas
+
+# Annex
+
+## [Results: Semantic shifts in immigration discourses]{.r-fit-text}
+
+::: {#fig-embedreg-immigration}
+
+![](alc_embedreg_immigration_plot.PNG){fig-align="left"}
+
+Embedding regression results in immigration discourses
+:::
+
+
+## [Results: Semantic shifts in climate discourses]{.r-fit-text}
+
+::: {#fig-embedreg-climate}
+
+![](alc_embedreg_climate_plot.PNG){fig-align="left"}
+
+Embedding regression results in climate discourses
+:::
+
+## [Results: Semantic shifts in race discourses]{.r-fit-text}
+
+::: {#fig-embedreg-race}
+
+![](alc_embedreg_race_plot.PNG){fig-align="left"}
+
+Embedding regression results in race discourses
+:::
+
+
+## [Results: First component trends across policy topics]{.r-fit-text}
+
+::: {#fig-doc2vec}
+
+![](doc2vec_senate.PNG){fig-align="left"}
+
+Doc2Vec-derived first component trends across policy areas
+:::
+
