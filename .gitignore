@@ -16,3 +16,7 @@
 references/
 1_raw/
 2_build/
+3_docs/report/alc_*.pdf
+3_docs/report/alc_*.PNG
+3_docs/report/doc2vec_*.pdf
+3_docs/report/doc2vec_*.PNG
