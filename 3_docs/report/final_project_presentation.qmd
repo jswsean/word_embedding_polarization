@@ -231,6 +231,13 @@ Step 3: Compute transformation matrix $\mathbf{\hat{A}}$
 * Computed with a weighting value of 500
 
 
+## Methods
+
+Step 4: Subset corpus based on keywords of interest
+
+Step 5: Conduct ALC analysis on corpus subset
+
+
 ## [Results: Semantic shifts in abortion discourses]{.r-fit-text}
 
 ::: {#fig-embedreg-abortion}
