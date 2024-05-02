@@ -85,6 +85,12 @@ toks_feats <- tokens_select(
     padding = TRUE
 )
 
+# Save the toks_feats object
+save(toks_feats, file = here('2_build', 'toks_feats.RData'))
+
+# Save the features result
+saveRDS(features, here('2_build', 'features_vector.rds'))
+
 # ------------------------------------------------------------
 # Estimate glove embeddings ----
 # ------------------------------------------------------------
@@ -102,7 +108,7 @@ glove <- GlobalVectors$new(
 )
 
 main_wv <- glove$fit_transform(
-    toks_fcm, n_iter = 10, 
+    toks_fcm, n_iter = 100, 
     convergence_tol = 1e-3, 
     n_threads = parallel::detectCores()
 )
